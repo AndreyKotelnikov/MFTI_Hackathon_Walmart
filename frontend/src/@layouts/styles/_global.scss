@@ -1,0 +1,14 @@
+*,
+::before,
+::after {
+  box-sizing: inherit;
+  background-repeat: no-repeat;
+}
+
+html {
+  box-sizing: border-box;
+}
+.v-btn .v-btn__content {
+  
+  text-transform: none;
+}

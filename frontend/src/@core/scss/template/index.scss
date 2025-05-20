@@ -1,0 +1,19 @@
+@use "sass:map";
+@use "@core/scss/base";
+
+// layouts
+@use "vertical-nav";
+@use "default-layout-w-vertical-nav";
+
+// Utilities
+@use "utilities";
+
+.inline-desktop {
+  display: inline;
+}
+
+@media (max-width: 600px) {
+  .inline-desktop {
+    display: none;
+  }
+}
