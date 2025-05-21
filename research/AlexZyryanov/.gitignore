@@ -1,0 +1,10 @@
+#pycache
+*/__pycache__/*
+*.pyc
+*.pyo
+*.mo
+*data/*
+*media/*
+*venv/*
+.env
+
