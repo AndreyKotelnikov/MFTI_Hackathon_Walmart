@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    CalendarHeatmap: typeof import('./src/components/common/CalendarHeatmap.vue')['default']
     CompactDatePicker: typeof import('./src/components/common/CompactDatePicker.vue')['default']
     ErrorHeader: typeof import('./src/components/ErrorHeader.vue')['default']
     MoreBtn: typeof import('./src/@core/components/MoreBtn.vue')['default']

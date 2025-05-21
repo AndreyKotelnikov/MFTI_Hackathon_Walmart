@@ -8,6 +8,10 @@ export const routes = [
         path: '',
         component: () => import('@/pages/dashboard.vue'),
       },
+      {
+        path: 'prediction/:id',
+        component: () => import('@/pages/prediction.vue'),
+      },
     ],
   },
   {
