@@ -40,18 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'django.contrib.sites',
-    'allauth',
-    'allauth.account',
     'rest_framework',
     'easy_thumbnails',
-    # 'django_rest_allauth',
-    'rest_framework.authtoken',
-    # 'hackathon.apps.SuitConfig',
     'django.contrib.admin',
-    # 'django_ipgeobase',
-    # 'admin_reorder',
-    # 'core',
     'api',
 ]
 
