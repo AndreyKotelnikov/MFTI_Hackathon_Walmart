@@ -49,7 +49,7 @@ onMounted(() => {
 
           <a
             target="_blank"
-            href="https://github.com"
+            href="https://github.com/AndreyKotelnikov/MFTI_Hackathon_Walmart"
             rel="noopener noreferrer"
             :class="$vuetify.theme.current.dark ? 'text-body-1' : 'text-white-variant'"
           >
@@ -63,7 +63,7 @@ onMounted(() => {
 
           <a
             target="_blank"
-            href="https://github.com"
+            href="https://t.me/AndreyKotelnikov"
             rel="noopener noreferrer"
             :class="$vuetify.theme.current.dark ? 'text-body-1' : 'text-white-variant'"
           >
