@@ -2,13 +2,11 @@
   <v-card class="w-full max-w-md shadow" elevation="3">
     <v-card-text>
       <v-row>
-        <v-col cols="12" class="text-lg font-semibold">
-          Предсказание: {{ item.units_pred.toFixed(1) }} шт.
-        </v-col>
-        <v-col cols="12" class="text-sm">
-          Факт: {{ item.units }} шт.
-          <br />
-          Δ: {{ diff }} (×{{ coef.toFixed(2) }})
+        <v-col cols="12">
+          <h4 class="text-lg font-semibold mb-1">
+            {{ title }}
+          </h4>
+          Предсказание: {{ item.units_pred.toFixed(4) }} ед.
         </v-col>
       </v-row>
 
@@ -16,9 +14,9 @@
 
       <v-row dense>
         <v-col cols="6" class="text-caption">
-          Tavg: {{ item.tavg }}°C<br />
-          Tmax: {{ item.tmax }}°C<br />
-          Tmin: {{ item.tmin }}°C
+          Tavg: {{ fahrenheitToCelsius(item.tavg).toFixed(1) }}°C<br />
+          Tmax: {{ fahrenheitToCelsius(item.tmax).toFixed(1) }}°C<br />
+          Tmin: {{ fahrenheitToCelsius(item.tmin).toFixed(1) }}°C
         </v-col>
         <v-col cols="6" class="text-caption">
           Осадки (RA): {{ item.RA }}<br />
@@ -40,18 +38,18 @@
       <div class="h5 text-muted mb-1">SHAP-анализ</div>
         <div v-for="(factor, index) in preditionFactors" :key="index" class="mb-3 text-caption">
           <div class="d-flex justify-space-between mb-1">
-            <span>
+            <span :class="differentFactorStyle(factor)">
               {{ factor.name }}
-              <span v-if="factor.property_value">({{ factor.property_value }})</span>
+              <span>({{ factor.value }})</span>
             </span>
-            <span>{{ (factor.value * 100).toFixed(1) }}%</span>
+            <span>{{ (factor.score * 100).toFixed(2) }}%</span>
           </div>
 
           <v-progress-linear
-            :model-value="factor.value * 100"
+            :model-value="factor.score * 100"
             height="10"
             rounded
-            color="primary"
+            :color="factor.is_different ? differentColor : 'primary'"
           ></v-progress-linear>
         </div>
     </v-card-text>
@@ -59,7 +57,6 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
 
 interface PredictionItem {
   id: number
@@ -68,7 +65,7 @@ interface PredictionItem {
   store_item_code: string
   tavg: number
   RA: number
-  units: number
+  // units: number
   units_pred: number
   units_yesterday: number
   units_prev_week: number
@@ -77,40 +74,51 @@ interface PredictionItem {
   stnpressure: number
   avgspeed: number
   is_weekend: number
+  shap: any
 }
 
-const props = defineProps<{ item: PredictionItem }>()
+const $props = withDefaults(defineProps<{
+  item: PredictionItem,
+  title: string,
+  differentFields: string[],
+  fieldLabels: any,
+  differentColor?: string,
+}>(),
+  {
+    differentColor: 'success'
+  }
+)
 
-const diff = computed(() => props.item.units_pred - props.item.units)
-const coef = computed(() => {
-  return props.item.units > 0 ? props.item.units_pred / props.item.units : 0
+const preditionFactors = computed(() => {
+  const result = [] as any[]
+  const shap = $props.item.shap as any
+  const keys = Object.keys(shap)
+  const scores = Object.values(shap) as number[]
+  const maxValue = Math.max(...scores)
+
+  keys.forEach(key => {
+    
+    const value = (key as keyof PredictionItem) in $props.item 
+    ? $props.item[key as keyof PredictionItem] 
+    : '-';
+
+    result.push({
+      name: key in $props.fieldLabels ? $props.fieldLabels[key] : key,
+      key: key,
+      value: value,
+      score: maxValue > 1 ? shap[key] / maxValue : shap[key],
+      is_different: $props.differentFields.includes(key)
+    })
+  })
+
+  return result
 })
 
-const preditionFactors = ref([
-{
-    name: 'Продажи за вчерашный день',
-    property_value: '23',
-    value: 0.95,
-  },
-  {
-    name: 'Уровень осадков',
-    property_value: '3',
-    value: 0.35,
-  },
-  {
-    name: 'Температура средняя',
-    property_value: '23',
-    value: 0.25,
-  },
-  {
-    name: 'Температура на завтра',
-    property_value: '23',
-    value: 0.15,
-  },
-  {
-    name: 'Был дождь',
-    property_value: '12',
-    value: 0.11,
-  },
-])
+const differentFactorStyle = computed(() => (factor: any) => {
+  return factor.is_different ? 'text-' + $props.differentColor + ' font-weight-bold' : ''
+})
+
+const fahrenheitToCelsius = computed(() => (f: number) => {
+  return (f - 32) * 5 / 9;
+})
 </script>

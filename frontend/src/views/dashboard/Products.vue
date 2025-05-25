@@ -85,6 +85,12 @@
     no-data-text="Продажи не найдены"
   >
 
+    <template #item.store_item_code="{ item }">
+      <RouterLink :to="'/prediction/' + item.id">
+        {{ item.store_item_code }}
+      </RouterLink>
+    </template>
+
     <template #item.prediction_date="{ item }">
       <div v-if="item.prediction_date" class="text-center">
         {{ item.prediction_date }}
@@ -92,14 +98,14 @@
     </template>
 
     <template #item.units_pred="{ item }">
-      <div v-if="item.units_pred" class="text-center">
-        {{ item.units_pred.toFixed(2) }}
+      <div class="text-center">
+        {{ item.units_pred ? item.units_pred.toFixed(2) : '-' }}
       </div>
     </template>
 
     <template #item.pred_without="{ item }">
-      <div v-if="item.pred_without" class="text-center">
-        {{ item.pred_without.toFixed(2) }}
+      <div class="text-center">
+        {{ item.pred_without ? item.pred_without.toFixed(2) : '-' }}
       </div>
     </template>
 
@@ -107,18 +113,24 @@
       <div class="text-center">
         <VChip v-if="item.difference"
           :color="item.difference > 0 ? 'success' : 'error'"
-          class="mx-auto"
+          class="mx-auto "
+          :class="{ 'opacity-50': item.pred_without < 2.5802225041841567 }"
         >
           <VIcon v-if="item.difference > 0" icon="ri-arrow-up-s-fill"/>
           <VIcon v-else icon="ri-arrow-down-s-fill"/>
           {{ item.difference.toFixed(2) }} ед.
         </VChip>
+        <span v-else>-</span>
       </div>
     </template>
 
     <template #item.coefficient="{ item }">
-      <div v-if="item.coefficient" class="text-center">
-        {{ item.coefficient.toFixed(3) }}
+      <!-- Используем для отсечения нижний 0.6 квартиль. Хорощо бы динамически его считать и хранить где-то. -->
+      <div v-if="item.coefficient && item.pred_without < 2.5802225041841567" class="text-center text-error">
+        {{ item.coefficient.toFixed(3) }} (шум)
+      </div>
+      <div v-else class="text-center">
+        {{ item.coefficient ? item.coefficient.toFixed(3) : '-' }}
       </div>
     </template>
 
