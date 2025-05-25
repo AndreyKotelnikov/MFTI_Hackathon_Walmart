@@ -67,6 +67,7 @@ class PredictionBase(models.Model):
     days_to_holiday = models.FloatField()
     units = models.FloatField()
     units_pred = models.FloatField()
+    shap = models.JSONField()
 
     class Meta:
         abstract = True
@@ -89,13 +90,14 @@ class PredictionReal(PredictionBase):
         db_table = 'prediction_real_weather'
         managed = False
 
+    # Соответствующее этому предсказание с "чистой" погодой.
     @property
     def pred_without(self):
         p = PredictionWithout.objects.filter(
             prediction_date = self.prediction_date,
             store_item_code = self.store_item_code
         ).first()
-        return p.units_pred if p else None
+        return p if p else None
 
 
 class MeteoStation(models.Model):
