@@ -2,10 +2,11 @@ import json
 from django.db.models import Q
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from api.models import PredictionWithout
+from api.models import PredictionResearch
 from api.models import PredictionReal
 from api.models import MeteoStation
 from api.models import Store
+from api.models import Research
 from hackathon.sources_db import runQuery
 from django.forms.models import model_to_dict
 
@@ -47,12 +48,10 @@ class StoreSerializer(serializers.ModelSerializer):
 
 class PredictionListSerializer(serializers.ModelSerializer):
     
-    pred_without = serializers.ReadOnlyField(source='pred_without.units_pred')
-    difference = serializers.SerializerMethodField()
-    coefficient = serializers.SerializerMethodField()
+    real_pred = serializers.ReadOnlyField(source='real.units_pred')
 
     class Meta:
-        model = PredictionReal
+        model = PredictionResearch
         fields = (
             'id',
             'prediction_date',
@@ -62,26 +61,10 @@ class PredictionListSerializer(serializers.ModelSerializer):
             'RA',
             'units',
             'units_pred',
-            'pred_without',
+            'real_pred',
             'difference',
             'coefficient',
         )
-
-    def get_difference(self, obj):
-        units_pred_without = obj.pred_without.units_pred if obj.pred_without else None
-        if not units_pred_without:
-            return 0
-        if obj.units_pred == 0 or units_pred_without == 0:
-            return 0
-        return obj.units_pred - units_pred_without
-
-    def get_coefficient(self, obj):
-        units_pred_without = obj.pred_without.units_pred if obj.pred_without else None
-        if not units_pred_without:
-            return 0
-        if obj.units_pred == 0 or units_pred_without == 0:
-            return 0
-        return obj.units_pred / units_pred_without
 
 
 class PredictionDetailSerializer(serializers.ModelSerializer):
@@ -103,23 +86,42 @@ class PredictionDetailSerializer(serializers.ModelSerializer):
         )
         
     def get_shap(self, obj):
+        if type(obj.shap) == dict:
+            return obj.shap
+        if not obj.shap:
+            return {}
         return json.loads(obj.shap.replace("'", '"'))
 
-class PredictionRealSerializer(PredictionListSerializer):
+
+class PredictionResearchSerializer(PredictionListSerializer):
 
     real_detail = serializers.SerializerMethodField()
-    without_detail = serializers.SerializerMethodField()
+    research_detail = serializers.SerializerMethodField()
 
     class Meta(PredictionListSerializer.Meta):
 
-        model = PredictionReal
+        model = PredictionResearch
 
         fields = PredictionListSerializer.Meta.fields + (
-            'real_detail', 'without_detail',
+            'real_detail', 'research_detail',
         )
 
     def get_real_detail(self, obj):
+        return PredictionDetailSerializer(obj.real, many=False).data
+
+    def get_research_detail(self, obj):
         return PredictionDetailSerializer(obj, many=False).data
 
-    def get_without_detail(self, obj):
-        return PredictionDetailSerializer(obj.pred_without, many=False).data
+
+class ResearchSerializer(serializers.ModelSerializer):
+
+    mode = serializers.CharField(required=True)
+    period_start = serializers.DateField(required=True)
+    period_end = serializers.DateField(required=True)
+    avg_temp = serializers.IntegerField(required=True)
+    precip_amount = serializers.IntegerField(required=True)
+
+    class Meta:
+        model = Research
+        fields = '__all__'
+        read_only_fields = ('created_at',)

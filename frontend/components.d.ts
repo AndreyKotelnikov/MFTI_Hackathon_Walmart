@@ -13,6 +13,8 @@ declare module 'vue' {
     MoreBtn: typeof import('./src/@core/components/MoreBtn.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SelectPeriodMode: typeof import('./src/components/home/SelectPeriodMode.vue')['default']
+    SelectSeason: typeof import('./src/components/search/SelectSeason.vue')['default']
     ThemeSwitcher: typeof import('./src/@core/components/ThemeSwitcher.vue')['default']
     UsaMapPie: typeof import('./src/components/common/UsaMapPie.vue')['default']
   }

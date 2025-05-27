@@ -31,7 +31,7 @@ const getDifferentFields = computed(() => {
   }
 
   const realProps = predictionData.value.real_detail
-  const withoutProps = predictionData.value.without_detail
+  const withoutProps = predictionData.value.research_detail
   const excludedKeys = [
   'units_pred', 'store_code', 'store_item_code', 'shap'
   ]
@@ -148,7 +148,7 @@ onMounted(() => {
           дата: {{ predictionData.prediction_date }}
         </h2>
         <h3 class="h3 mb-8 text-disabled">
-          Сравнение предсказаний по реальной погоде и по "очищенной"
+          Сравнение предсказаний по реальной погоде и заданной пользователем
         </h3>
       </div>
     </div>
@@ -157,7 +157,7 @@ onMounted(() => {
       <v-list-item>
         <v-list-item-content>
           <v-list-item-title class="font-weight-bold">Реальное количество покупок:</v-list-item-title>
-          <v-list-item-subtitle v-if="predictionData.pred_without < 2.5802225041841567"
+          <v-list-item-subtitle v-if="predictionData.real_pred < 2.5802225041841567"
             class="text-h6 text-error"
           >
             {{ predictionData.units }} ед. (шум)
@@ -220,8 +220,8 @@ onMounted(() => {
       </VCol>
       <VCol cols="12" md="6" sm="12">
         <PredictionCard
-          :item="predictionData.without_detail"
-          title="Очищенная погода"
+          :item="predictionData.research_detail"
+          title="Пользовательская погода"
           :different-fields="getDifferentFields"
           :field-labels="fieldLabels"
           different-color="warning"

@@ -15,11 +15,18 @@
   const selectedMarket = ref<number|null>(null)
   // const loyaltyFilterDialog = ref<typeof LoyaltyFilterDialog|null>(null)
 
+  const $props = defineProps({
+    researchId: {
+      type: Number,
+      required: true
+    }
+  })
+
   const headers = [
     { title: '#', key: 'store_item_code' },
     { title: 'Дата', key: 'prediction_date' },
-    { title: 'Заказов', key: 'units_pred' },
-    { title: 'При "0" погоде', key: 'pred_without' },
+    { title: 'Реально заказов', key: 'real_pred' },
+    { title: 'При выбранной погоде', key: 'units_pred' },
     { title: 'Рост / Падение', key: 'difference' },
     { title: 'Коэффициент', key: 'coefficient' },
     { title: 'Actions', key: 'actions', sortable: false },
@@ -37,7 +44,7 @@
       currentPage.value = 1
     }
     isLoading.value = true
-    let url = '/api/predictions/?page=' + currentPage.value
+    let url = '/api/predictions/?page=' + currentPage.value + '&research_id=' + $props.researchId
 
     $api.get(url)
       .then(response => {
@@ -70,8 +77,7 @@
 
   <VDivider class="mt-4" />
 
-  <p class="text-sm text-disabled mb-0 mt-1">* Сравнение прогнозируемых продаж при реальной погоде и при «0-погоде»</p>
-  <p class="text-sm text-disabled">** «0-погода» - это условное понятие: температура средняя скользящая за 14 дней, синоптические события исключены, осадки = 0</p>
+  <p class="text-sm text-disabled mb-0 mt-1">* Сравнение прогнозируемых продаж при реальной погоде и при указанной пользователем</p>
 
   <VDataTableServer
     :items-per-page="15"
@@ -103,9 +109,9 @@
       </div>
     </template>
 
-    <template #item.pred_without="{ item }">
+    <template #item.real_pred="{ item }">
       <div class="text-center">
-        {{ item.pred_without ? item.pred_without.toFixed(2) : '-' }}
+        {{ item.real_pred ? item.real_pred.toFixed(2) : '-' }}
       </div>
     </template>
 
@@ -114,7 +120,7 @@
         <VChip v-if="item.difference"
           :color="item.difference > 0 ? 'success' : 'error'"
           class="mx-auto "
-          :class="{ 'opacity-50': item.pred_without < 2.5802225041841567 }"
+          :class="{ 'opacity-50': item.real_pred < 2.5802225041841567 }"
         >
           <VIcon v-if="item.difference > 0" icon="ri-arrow-up-s-fill"/>
           <VIcon v-else icon="ri-arrow-down-s-fill"/>
@@ -126,7 +132,7 @@
 
     <template #item.coefficient="{ item }">
       <!-- Используем для отсечения нижний 0.6 квартиль. Хорощо бы динамически его считать и хранить где-то. -->
-      <div v-if="item.coefficient && item.pred_without < 2.5802225041841567" class="text-center text-error">
+      <div v-if="item.coefficient && item.real_pred < 2.5802225041841567" class="text-center text-error">
         {{ item.coefficient.toFixed(3) }} (шум)
       </div>
       <div v-else class="text-center">

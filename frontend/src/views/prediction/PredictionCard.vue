@@ -111,7 +111,7 @@ const preditionFactors = computed(() => {
     })
   })
 
-  return result
+  return result.sort((a, b) => a.score > b.score ? -1 : 1)
 })
 
 const differentFactorStyle = computed(() => (factor: any) => {

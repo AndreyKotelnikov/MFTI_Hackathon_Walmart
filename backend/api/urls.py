@@ -6,6 +6,7 @@ app_name = 'api'
 
 router = DefaultRouter()
 router.register('predictions', views.SearchPredictionViewSet, basename='prediction')
+router.register('researches', views.ResearchViewSet, basename='research')
 
 urlpatterns = [
     path('', include(router.urls)),

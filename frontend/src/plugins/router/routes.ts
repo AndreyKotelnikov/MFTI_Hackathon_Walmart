@@ -6,6 +6,14 @@ export const routes = [
     children: [
       {
         path: '',
+        component: () => import('@/pages/home.vue'),
+      },
+      {
+        path: 'researches',
+        component: () => import('@/pages/researches.vue'),
+      },
+      {
+        path: 'dashboard/:id',
         component: () => import('@/pages/dashboard.vue'),
       },
       {

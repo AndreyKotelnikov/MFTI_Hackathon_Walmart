@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-lvbc00v86y_fv@wv_c3a^-=7mza!2*ypity23vv%7su69%%-m=
 DEBUG = True
 
 ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', '46.173.214.94', 'goldenmean.pro']
-CSRF_TRUSTED_ORIGINS = ['http://0.0.0.0:3100', 'https://46.173.214.94', 'https://goldenmean.pro']
+CSRF_TRUSTED_ORIGINS = ['http://0.0.0.0:3100', 'http://127.0.0.1:3100', 'https://46.173.214.94', 'https://goldenmean.pro']
 
 # Application definition
 
