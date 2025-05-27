@@ -68,7 +68,6 @@ def process_predictions_with_ml(research):
             prediction.coefficient = row['units_pred'] / real_units_pred if real_units_pred != 0 else 0
             
             prediction.save()
-            print('3.3')
     
     return research_predictions
 

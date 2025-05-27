@@ -102,11 +102,8 @@ class ResearchViewSet(ModelViewSet):
         
         research = serializer.save()
         real_predictions = get_research_predictions(research)
-        print(1111)
         research_predictions = create_research_predictions(research, real_predictions)
-        print(2222)
         process_predictions_with_ml(research)
-        print(3333)
         
         return Response(
             serializer.data,
