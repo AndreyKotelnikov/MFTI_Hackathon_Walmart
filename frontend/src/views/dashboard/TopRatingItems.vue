@@ -1,6 +1,8 @@
 <template>
+  <div class="text-center my-8">
+    <h2 class="h2">Коэффициенты соотношений продаж</h2>
+  </div>
   <v-card>
-    <v-card-title class="mb-4">Анализ соотношений продаж</v-card-title>
     
     <v-card-text class="d-flex gap-4 flex-wrap w-full" style="justify-content: space-around;">
       <!-- Топ-5 лучших -->
@@ -54,21 +56,13 @@
 
     <v-card-text v-else>
 
-      <!-- Легенда -->
-      <div class="mt-4 text-caption text-medium-emphasis">
-        <div class="d-flex align-center mb-1">
-          <v-icon icon="mdi-circle" color="green-darken-3" size="small" class="mr-1" />
-          <span>Соотношение ≥ 1.0 (превышение спроса)</span>
-        </div>
-        <div class="d-flex align-center mb-1">
-          <v-icon icon="mdi-circle" color="orange-darken-2" size="small" class="mr-1" />
-          <span>Соотношение 0.9-1.0 (близко к норме)</span>
-        </div>
-        <div class="d-flex align-center">
-          <v-icon icon="mdi-circle" color="red-darken-2" size="small" class="mr-1" />
-          <span>Соотношение меньше 0.9 (падение спроса)</span>
-        </div>
-      </div>
+      <h4 class="h4">Коэффициенты:</h4>
+      <p class="my-1">
+        Для каждого товара рассчитывается сумма прогнозных продаж при заданной погоде, которая затем сравнивается с соответствующей суммой при фактической погоде. Полученное отношение показывает изменение спроса.
+      </p>
+      <p class="">
+        Подробную информацию о каждом прогнозе вы найдёте в таблице «Детальный разбор прогнозов продаж».
+      </p>
     </v-card-text>
   </v-card>
 </template>
