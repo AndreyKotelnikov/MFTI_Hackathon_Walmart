@@ -5,7 +5,7 @@
     <v-card-text class="d-flex gap-4 flex-wrap w-full" style="justify-content: space-around;">
       <!-- Топ-5 лучших -->
       <div class="mb-6" style="max-width: 600px; min-width: 300px; flex: 1;">
-        <div class="text-subtitle-1 text-white mb-2">Топ-5 лучших показателей</div>
+        <div class="text-subtitle-1 text-white mb-2">Топ-5 роста продаж</div>
 
         <div v-for="(item, index) in topItems" :key="index" class="mb-3 text-caption">
           <div class="d-flex justify-space-between mb-1">
@@ -26,7 +26,7 @@
       </div>
 
       <div class="mb-6" style="max-width: 600px; min-width: 300px; flex: 1;">
-        <div class="text-subtitle-1 text-white mb-2">Топ-5 худших показателей</div>
+        <div class="text-subtitle-1 text-white mb-2">Топ-5 падения продаж</div>
 
         <div v-for="(item, index) in bottomItems" :key="index" class="mb-3 text-caption">
           <div class="d-flex justify-space-between mb-1">
