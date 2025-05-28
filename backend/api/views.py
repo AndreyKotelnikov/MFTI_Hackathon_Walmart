@@ -1,3 +1,4 @@
+import json
 from datetime import timedelta
 from django.shortcuts import render
 from django.views.generic import TemplateView
@@ -31,13 +32,20 @@ from rest_framework.authtoken.models import Token
 
 from api.services.predictions import get_research_predictions
 from api.services.predictions import create_research_predictions
+from api.services.predictions import group_by_store
 from api.services.machine_learning import process_predictions_with_ml
 from api.services.machine_learning import get_prediction_shap
 
 from api.services.reports import churn_sales_report
 
-from django.contrib.auth import authenticate, get_user_model
-User = get_user_model()
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from .models import Research
+from .serializers import ResearchSerializer
+
+
+
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
@@ -68,7 +76,6 @@ class SearchPredictionViewSet(ModelViewSet):
         instance = self.get_object()
         
         # Проверяем и заполняем поле shap при необходимости
-        print('instance.shap', instance.shap)
         if not instance.shap:
             instance.shap = get_prediction_shap(instance.id)
             instance.save()
@@ -76,16 +83,25 @@ class SearchPredictionViewSet(ModelViewSet):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)            
 
+
 class StoreListView(ListAPIView):
     serializer_class = api_serializers.StoreSerializer
     queryset = Store.objects.all()
 
+    def list(self, request, *args, **kwargs):
+        research_id = request.GET.get('research_id')
+        research = Research.objects.get(id=research_id)
+        items_rating = json.loads(research.items_ratios_json)
+        stores_with_items = group_by_store(items_rating)
+        queryset = Store.objects.all()
+        serializer = self.get_serializer(queryset, many=True)
+        all_stores = [
+            {**s, 'items': stores_with_items[s['name']]} 
+            for s in serializer.data 
+            if s['name'] in stores_with_items
+        ]
+        return Response(all_stores)            
 
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from .models import Research
-from .serializers import ResearchSerializer
 
 class ResearchViewSet(ModelViewSet):
     queryset = Research.objects.all().order_by('-created_at')

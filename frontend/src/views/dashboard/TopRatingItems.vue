@@ -20,7 +20,7 @@
             :model-value="normalizedValue(item.ratio)"
             height="10"
             rounded
-            :color="getColor(item.ratio)"
+            color="success"
           ></v-progress-linear>
         </div>
       </div>
@@ -41,7 +41,7 @@
             :model-value="normalizedValue(item.ratio)"
             height="10"
             rounded
-            :color="getColor(item.ratio)"
+            color="primary"
           ></v-progress-linear>
         </div>
       </div>
@@ -95,11 +95,19 @@ const bottomItems = computed(() => {
   return sortedItems.value.slice(-5).reverse()
 })
 
+const maxValue = computed(() => {
+  if (!sortedItems.value) {
+    return 100
+  }
+  return sortedItems.value[0].ratio
+})
+
+
 // Нормализуем значение для прогресс-бара (0-100)
 const normalizedValue = (ratio: number) => {
-  // Для значений > 1.0 (превышение спроса) показываем полный прогресс-бар
-  if (ratio >= 1.0) return 100
-  // Для остальных - масштабируем от 0 до 100
+  if (maxValue.value > 100) {
+    return ratio / maxValue.value * 100
+  }
   return ratio * 100
 }
 

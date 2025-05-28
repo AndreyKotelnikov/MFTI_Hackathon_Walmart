@@ -1,7 +1,8 @@
 import pandas as pd
 from api.models import PredictionReal
-from django.db import transaction
 from api.models import PredictionReal, PredictionResearch, Research
+from collections import defaultdict
+from django.db import transaction
 
 def get_research_predictions(research):
     queryset = PredictionReal.objects.filter(
@@ -156,3 +157,20 @@ def create_research_predictions(research, real_predictions):
     created_predictions = PredictionResearch.objects.bulk_create(research_predictions)
     
     return created_predictions
+
+
+def group_by_store(data):
+    """
+    Группирует записи по идентификатору магазина (первая цифра в store_item_code)
+    
+    :param data: Список словарей формата [{'store_item_code': 'X-XXX', 'ratio': float}, ...]
+    :return: Словарь {store_id: [записи_магазина], ...}
+    """
+    grouped = defaultdict(list)
+    
+    for item in data:
+        # Извлекаем первую цифру до дефиса как идентификатор магазина
+        store_id = 's' + item['store_item_code'].split('-')[0]
+        grouped[store_id].append(item)
+    
+    return dict(grouped)

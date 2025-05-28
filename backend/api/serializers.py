@@ -43,7 +43,7 @@ class StoreSerializer(serializers.ModelSerializer):
         return MeteoStationSerializer(obj.station).data
 
     def get_title(self, obj):
-        return f'Walmart #{obj.store_nbr}'
+        return f'Магазин #{obj.store_nbr}'
 
 
 class PredictionListSerializer(serializers.ModelSerializer):

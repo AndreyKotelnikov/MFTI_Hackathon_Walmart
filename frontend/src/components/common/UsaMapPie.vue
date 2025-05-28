@@ -40,23 +40,23 @@ echarts.registerMap('USA', usaJson as any, {
 })
 
 const createStorePie = (storeItem: any) => {
-  return randomPieSeries([storeItem.station_detail.longitude, storeItem.station_detail.latitude], 25)
+  return randomPieSeries([storeItem.station_detail.longitude, storeItem.station_detail.latitude], 25, storeItem.items)
 }
 
-const randomPieSeries = (center: any, radius: any) => {
-  const data = ['12', '11', '45', '34'].map((t) => {
-    const value = Math.round(Math.random() * 100) - 50
-    const mark = value >= 0 ? '' : '🔻'
+const randomPieSeries = (center: any, radius: any, items: any[]) => {
+  const data = items.map((storeItem) => {
+    const value = 100 * storeItem.ratio
+    const mark = storeItem.ratio >= 1 ? '⬆️' : '🔻'
     return {
-      value: value,
-      name: 'Товар #' + t
+      value: value.toFixed(1),
+      name: 'Товар #' + storeItem.store_item_code + ' ' + mark
     };
   });
   return {
     type: 'pie',
     coordinateSystem: 'geo',
     tooltip: {
-      formatter: '{b}: 🔻{c} ({d}%)'
+      formatter: '{b}: {c}%'
     },
     label: {
       show: false

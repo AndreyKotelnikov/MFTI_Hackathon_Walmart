@@ -20,7 +20,7 @@ const loadData = async () => {
     researchData.value = response.data
   })
 
-  let url = '/api/stores/list'
+  let url = '/api/stores/list?research_id=' + researchId.value
   await $api.get(url)
     .then(response => {
       storesList.value = response.data
@@ -53,8 +53,6 @@ const itemsRating = computed(() => {
     <ResearchHeader v-if="researchData" :research="researchData" />
 
     <Consolidated :research="researchData" />
-    
-    
 
     <TopRatingItems  v-if="researchData" :items="itemsRating" />
 
