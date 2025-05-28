@@ -54,6 +54,8 @@ def process_predictions_with_ml(research):
     # ML логика:
     model = load_ml_model('CatBoost v1.cbm')
     df['units_pred'] = model.predict(df[model.feature_names_])
+    items_real_total = {}
+    items_research_total = {}
     
     # Обновляем объекты PredictionResearch
     with transaction.atomic():
@@ -66,8 +68,61 @@ def process_predictions_with_ml(research):
             # Вычисляем разницу и коэффициент
             prediction.difference = row['units_pred'] - real_units_pred
             prediction.coefficient = row['units_pred'] / real_units_pred if real_units_pred != 0 else 0
-            
+
+            store_item_code = row['store_item_code']
+            # Итоги по реальным продажам товара
+            if store_item_code in items_real_total:
+                items_real_total[store_item_code] += real_units_pred
+            else:
+                items_real_total[store_item_code] = real_units_pred
+
+            # Итоги по гипотетическим продажам товара
+            if store_item_code in items_research_total:
+                items_research_total[store_item_code] += prediction.units_pred
+            else:
+                items_research_total[store_item_code] = prediction.units_pred
+
             prediction.save()
+
+    # 1. Сумма всех продаж из items_real_total
+    sum_real = sum(items_real_total.values())
+
+    # 2. Сумма всех продаж из items_research_total
+    sum_research = sum(items_research_total.values())
+
+    # 3. Сумма всех положительных разниц (research - real)
+    positive_diffs_sum = sum(
+        research_val - real_val 
+        for real_val, research_val in zip(items_real_total.values(), items_research_total.values()) 
+        if research_val > real_val
+    )
+
+    # 4. Массив словарей {store_item_code, ratio}
+    ratio_dicts = [
+        {'store_item_code': code, 'ratio': items_research_total[code] / items_real_total[code]}
+        for code in items_real_total.keys()
+        if items_research_total[code] > 3
+    ]
+
+    # 5. Среднее всех ratio
+    average_ratio = sum(item['ratio'] for item in ratio_dicts) / len(ratio_dicts)
+
+    # Вывод результатов
+    # print(f"1. Сумма реальных продаж: {sum_real}")
+    # print(f"2. Сумма исследовательских продаж: {sum_research}")
+    # print(f"3. Сумма положительных разниц: {positive_diffs_sum}")
+    # print("4. Массив отношений:")
+    # for item in ratio_dicts:
+    #     print(f"   {item['store_item_code']}: {item['ratio']:.4f}")
+    # print(f"5. Среднее отношение: {average_ratio:.4f}")
+
+    research.units_real = sum_real
+    research.units_change = sum_research
+    research.units_over = positive_diffs_sum
+    research.avg_ratio = average_ratio
+    research.items_ratios_json = json.dumps(ratio_dicts)
+
+    research.save()
     
     return research_predictions
 

@@ -98,6 +98,11 @@ class Research(models.Model):
         validators=[MinValueValidator(0), MaxValueValidator(50)],
         verbose_name='Количество осадков (мм)'
     )
+    units_real = models.FloatField(verbose_name='Реально продано', null=True)
+    units_change = models.FloatField(verbose_name='Проданно при иной погоде', null=True)
+    units_over = models.FloatField(verbose_name='Превышение спроса', null=True)
+    avg_ratio = models.FloatField(verbose_name='Средний коэффициент', null=True)
+    items_ratios_json = models.JSONField(verbose_name='Коэффициенты для итемнов', null=True)
 
     class Meta:
         verbose_name = 'Исследование'

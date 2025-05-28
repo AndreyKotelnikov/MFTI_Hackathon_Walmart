@@ -2,12 +2,18 @@
   
   const is_loading = ref(true)
 
-  const widgetData = ref([
-    { title: 'Прогноз продаж', value: '2 343 ед.', desc: 'При текущей погоде', icon: 'ri-rainy-line', iconColor: 'warning' },
-    { title: 'Прогноз продаж', value: '2 721 ед.', desc: 'При нормальной погоде', icon: 'ri-temp-hot-line', iconColor: 'success' },
-    { title: 'Повышение спроса', value: '+378 ед.', desc: 'Суммарная разница', icon: 'ri-truck-line', iconColor: 'primary' },
-    { title: 'Средний коэффициент', value: '14%', desc: 'Доля влияния погоды', icon: 'ri-percent-line', iconColor: 'error' },
+  const widgetData = computed(() => [
+    { title: 'Прогноз продаж', value: $props.research?.units_real.toFixed(0) + ' ед.', desc: 'При текущей погоде', icon: 'ri-rainy-line', iconColor: 'warning' },
+    { title: 'Прогноз продаж', value: $props.research?.units_change.toFixed(0) + ' ед.', desc: 'При указанной погоде', icon: 'ri-temp-hot-line', iconColor: 'success' },
+    { title: 'Повышение спроса', value: $props.research?.units_over.toFixed(0) + ' ед.', desc: 'Сумма превышений продаж', icon: 'ri-truck-line', iconColor: 'primary' },
+    { title: 'Средний коэффициент', value: (100 * $props.research?.avg_ratio).toFixed(1) + '%', desc: 'Доля влияния погоды', icon: 'ri-percent-line', iconColor: 'error' },
   ])
+
+
+  const $props = defineProps<{
+    research: any
+  }>()
+
 
   const loadWidget = () => {
     is_loading.value = false
