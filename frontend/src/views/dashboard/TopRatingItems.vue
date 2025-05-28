@@ -2,7 +2,7 @@
   <v-card>
     <v-card-title class="mb-4">Анализ соотношений продаж</v-card-title>
     
-    <v-card-text class="d-flex gap-4 flex-wrap w-full">
+    <v-card-text class="d-flex gap-4 flex-wrap w-full" style="justify-content: space-around;">
       <!-- Топ-5 лучших -->
       <div class="mb-6" style="max-width: 600px; min-width: 300px; flex: 1;">
         <div class="text-subtitle-1 text-white mb-2">Топ-5 лучших показателей</div>
