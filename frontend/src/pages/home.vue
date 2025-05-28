@@ -31,7 +31,7 @@ const tickLabelsTemp = computed(() => {
 })
 const tickLabelsPrecip = computed(() => {
   const result = {} as any
-  for(let i=0; i<=50; i+=10) {
+  for(let i=0; i<=5; i+=1) {
     result[i] = i + 'мм'
   }
   return result
@@ -148,7 +148,7 @@ const createResearch = () => {
               tick-size="4"
               :ticks="tickLabelsPrecip"
               :min="0"
-              :max="50"
+              :max="5"
               :step="1"
               :disabled="isProcessing"
             ></v-slider>

@@ -45,7 +45,7 @@ def calculate_weather_override(real_prediction, research):
     # Вычисляем новые tmax и tmin (в °F)
     # (tmax + tmin)/2 = avg_temp => tmax = 2*avg_temp - tmin
     # И сохраняем соотношение tmax/tmin = original_ratio
-    tmin_f = (2 * avg_temp_f) / (original_ratio + 1)
+    tmin_f = (2 * avg_temp_f) / (original_ratio + 1) if (original_ratio + 1) != 0 else (2 * avg_temp_f) / 2.2
     tmax_f = 2 * avg_temp_f - tmin_f
     
     # Вычисляем новый depart (отклонение от нормы)
