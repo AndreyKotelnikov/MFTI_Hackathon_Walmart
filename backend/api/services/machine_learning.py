@@ -70,17 +70,19 @@ def process_predictions_with_ml(research):
             prediction.coefficient = row['units_pred'] / real_units_pred if real_units_pred != 0 else 0
 
             store_item_code = row['store_item_code']
-            # Итоги по реальным продажам товара
-            if store_item_code in items_real_total:
-                items_real_total[store_item_code] += real_units_pred
-            else:
-                items_real_total[store_item_code] = real_units_pred
 
-            # Итоги по гипотетическим продажам товара
-            if store_item_code in items_research_total:
-                items_research_total[store_item_code] += prediction.units_pred
-            else:
-                items_research_total[store_item_code] = prediction.units_pred
+            if real_units_pred > 2.6 and prediction.units_pred > 2.6:
+                # Итоги по реальным продажам товара
+                if store_item_code in items_real_total:
+                    items_real_total[store_item_code] += real_units_pred
+                else:
+                    items_real_total[store_item_code] = real_units_pred
+
+                # Итоги по гипотетическим продажам товара
+                if store_item_code in items_research_total:
+                    items_research_total[store_item_code] += prediction.units_pred
+                else:
+                    items_research_total[store_item_code] = prediction.units_pred
 
             prediction.save()
 
