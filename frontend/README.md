@@ -53,6 +53,7 @@
   - насколько значимым оказался каждый параметр (на основе SHAP-анализа).
 
 ![SHAP анализ](../research/AlexZyryanov/images/shap.png)
+![SHAP анализ](../research/AlexZyryanov/images/shap2.png)
 
 
 ## Использованные технологии:
