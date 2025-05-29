@@ -12,7 +12,7 @@ def get_research_predictions(research):
     if research.store_code:
         queryset = queryset.filter(store_code=research.store_code.replace('s', ''))
         if research.store_item_code:
-            queryset = queryset.filter(store_item_code=research.store_item_code)
+            queryset = queryset.filter(store_item_code=research.store_item_code.replace('-', '_'))
     
     return queryset.all()
 
