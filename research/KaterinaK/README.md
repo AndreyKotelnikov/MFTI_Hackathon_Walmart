@@ -30,3 +30,8 @@
 *Текущий результат.*
 
 RMSE на тесте: 9.3369, R² на тесте: 0.8741.
+
+Важность признаков по версии CatBoost:
+
+![image](https://github.com/user-attachments/assets/d5a57035-d5e0-425d-832f-dbcee1885e5d)
+
