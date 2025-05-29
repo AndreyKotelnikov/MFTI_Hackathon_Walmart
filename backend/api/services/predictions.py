@@ -1,16 +1,16 @@
 import pandas as pd
-from api.models import PredictionReal
-from api.models import PredictionReal, PredictionResearch, Research
+from api.models import PredictionKat
+from api.models import PredictionKat, PredictionResearch, Research
 from collections import defaultdict
 from django.db import transaction
 
 def get_research_predictions(research):
-    queryset = PredictionReal.objects.filter(
+    queryset = PredictionKat.objects.filter(
         prediction_date__gte=research.period_start,
         prediction_date__lte=research.period_end,
     )
     if research.store_code:
-        queryset = queryset.filter(store_code=research.store_code)
+        queryset = queryset.filter(store_code=research.store_code.replace('s', ''))
         if research.store_item_code:
             queryset = queryset.filter(store_item_code=research.store_item_code)
     
@@ -28,7 +28,7 @@ def mm_to_inches(mm):
 def calculate_weather_override(real_prediction, research):
     """
     Генерирует параметры погоды на основе research
-    :param real_prediction: объект PredictionReal
+    :param real_prediction: объект PredictionKat
     :param research: объект Research
     :return: dict с обновлёнными параметрами
     """
@@ -69,10 +69,10 @@ def create_research_predictions(research, real_predictions):
     Создает PredictionResearch объекты для указанного исследования
     
     :param research: исследование (Research)
-    :param real_predictions: QuerySet или список PredictionReal объектов
+    :param real_predictions: QuerySet или список PredictionKat объектов
     :return: Список созданных PredictionResearch объектов
     """
-    # Создаем PredictionResearch для каждого PredictionReal
+    # Создаем PredictionResearch для каждого PredictionKat
     research_predictions = []
     for real in real_predictions:
         
@@ -82,25 +82,24 @@ def create_research_predictions(research, real_predictions):
             PredictionResearch(
                 research=research,
                 real=real,
+
                 prediction_date=real.prediction_date,
                 store_code=real.store_code,
                 store_item_code=real.store_item_code,
-                units_yesterday=real.units_yesterday,
-                units_prev_week=real.units_prev_week,
+                month_oct=real.month_oct,
+                days_to_nearest_holiday=real.days_to_nearest_holiday,
+                rolling_sales_mean_3d=real.rolling_sales_mean_3d,
+                rolling_sales_mean_7d=real.rolling_sales_mean_7d,
+                item_nbr=real.item_nbr,
                 dewpoint=real.dewpoint,
                 wetbulb=real.wetbulb,
                 heat=real.heat,
                 cool=real.cool,
-                sunrise=real.sunrise,
-                sunset=real.sunset,
                 snowfall=real.snowfall,
-                stnpressure=real.stnpressure,
                 sealevel=real.sealevel,
                 resultspeed=real.resultspeed,
                 resultdir=real.resultdir,
                 avgspeed=real.avgspeed,
-                year=real.year,
-                week=real.week,
                 BCFG=real.BCFG,
                 BLDU=real.BLDU,
                 BLSN=real.BLSN,
@@ -108,6 +107,7 @@ def create_research_predictions(research, real_predictions):
                 DU=real.DU,
                 DZ=real.DZ,
                 FG=real.FG,
+                FG_plus=real.FG_plus,
                 FU=real.FU,
                 FZDZ=real.FZDZ,
                 FZFG=real.FZFG,
@@ -126,16 +126,44 @@ def create_research_predictions(research, real_predictions):
                 UP=real.UP,
                 VCFG=real.VCFG,
                 VCTS=real.VCTS,
-                day_of_week=real.day_of_week,
-                month=real.month,
-                is_weekend=real.is_weekend,
+                filled=real.filled,
+                weekend=real.weekend,
+                _fri=real._fri,
+                _mon=real._mon,
+                _sat=real._sat,
+                _sun=real._sun,
+                _thu=real._thu,
+                _tue=real._tue,
+                _wed=real._wed,
+                month_apr=real.month_apr,
+                month_aug=real.month_aug,
+                month_dec=real.month_dec,
+                month_feb=real.month_feb,
+                month_jan=real.month_jan,
+                month_jul=real.month_jul,
+                month_jun=real.month_jun,
+                month_mar=real.month_mar,
+                month_may=real.month_may,
+                month_nov=real.month_nov,
+                month_sep=real.month_sep,
+                season_autumn=real.season_autumn,
+                season_spring=real.season_spring,
+                season_summer=real.season_summer,
+                season_winter=real.season_winter,
+                day_of_year=real.day_of_year,
+                temperature_diff=real.temperature_diff,
+                heavy_precip=real.heavy_precip,
+                max_temp_last_3_days=real.max_temp_last_3_days,
+                avg_temp_last_3_days=real.avg_temp_last_3_days,
+                avg_precip_last_3_days=real.avg_precip_last_3_days,
+                avg_sealevel_last_3_days=real.avg_sealevel_last_3_days,
+                avg_speed_last_3_days=real.avg_speed_last_3_days,
                 is_holiday=real.is_holiday,
-                rain_streak=real.rain_streak,
-                dry_streak=real.dry_streak,
-                avg_temp_next_day=real.avg_temp_next_day,
-                rain_next_day=real.rain_next_day,
-                days_to_holiday=real.days_to_holiday,
-                units=real.units,
+                avg_daily_sales_item=real.avg_daily_sales_item,
+                store_sales_rank=real.store_sales_rank,
+                item_sales_rank=real.item_sales_rank,
+                zero_sales_count_7d=real.zero_sales_count_7d,
+
                 # tmax=real.tmax,
                 # tmin=real.tmin,
                 # tavg=real.tavg,
@@ -170,7 +198,7 @@ def group_by_store(data):
     
     for item in data:
         # Извлекаем первую цифру до дефиса как идентификатор магазина
-        store_id = 's' + item['store_item_code'].split('-')[0]
+        store_id = 's' + item['store_item_code'].split('_')[0]
         grouped[store_id].append(item)
     
     return dict(grouped)

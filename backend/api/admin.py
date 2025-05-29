@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from api.models import PredictionResearch
-from api.models import PredictionReal
+from api.models import PredictionKat
 from api.models import MeteoStation
 from api.models import Store
 from api.models import Research
@@ -22,8 +22,8 @@ class PredictionResearchAdmin(admin.ModelAdmin):
         return obj.real.id if obj.real else None
     real_id.short_description = 'Real ID'
 
-@admin.register(PredictionReal)
-class PredictionRealAdmin(admin.ModelAdmin):
+@admin.register(PredictionKat)
+class PredictionKatAdmin(admin.ModelAdmin):
     list_display = [
         'id',
         'prediction_date',

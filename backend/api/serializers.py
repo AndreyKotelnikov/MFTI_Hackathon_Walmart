@@ -3,7 +3,7 @@ from django.db.models import Q
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from api.models import PredictionResearch
-from api.models import PredictionReal
+from api.models import PredictionKat
 from api.models import MeteoStation
 from api.models import Store
 from api.models import Research
@@ -72,17 +72,15 @@ class PredictionDetailSerializer(serializers.ModelSerializer):
     shap = serializers.SerializerMethodField()
 
     class Meta:
-        model = PredictionReal
+        model = PredictionKat
         fields = (
-            'tavg', 'RA', 'units_pred', 'store_code', 'store_item_code',
-            'units_yesterday', 'units_prev_week', 
-            'tmax', 'tmin', 'depart', 'dewpoint', 'wetbulb', 'heat', 'cool', 'sunrise', 
-            'sunset', 'snowfall', 'preciptotal', 'stnpressure', 'sealevel', 'resultspeed', 
-            'resultdir', 'avgspeed', 'year', 'week', 'BCFG', 'BLDU', 'BLSN', 'BR', 'DU', 'DZ', 
-            'FG', 'FU', 'FZDZ', 'FZFG', 'FZRA', 'GR', 'GS', 'HZ', 'MIFG', 'PL', 'PRFG', 'SG', 
-            'SN', 'SQ', 'TS', 'TSRA', 'TSSN', 'UP', 'VCFG', 'VCTS', 'day_of_week', 'month', 
-            'is_weekend', 'is_holiday', 'rain_streak', 'dry_streak', 'avg_temp_next_day', 
-            'rain_next_day', 'days_to_holiday', 'shap',
+            'prediction_date', 'store_code', 'store_item_code', 'month_oct', 'days_to_nearest_holiday', 'rolling_sales_mean_3d', 'rolling_sales_mean_7d', 'units_pred', 
+            'tavg', 'tmax', 'tmin', 'depart', 'RA', 'SN', 'preciptotal', 'item_nbr', 'dewpoint', 'wetbulb', 'heat', 'cool', 'snowfall', 'sealevel', 'resultspeed', 'resultdir', 
+            'avgspeed', 'BCFG', 'BLDU', 'BLSN', 'BR', 'DU', 'DZ', 'FG', 'FG_plus', 'FU', 'FZDZ', 'FZFG', 'FZRA', 'GR', 'GS', 'HZ', 'MIFG', 'PL', 'PRFG', 'SG', 'SQ', 'TS', 'TSRA', 
+            'TSSN', 'UP', 'VCFG', 'VCTS', 'filled', 'weekend', '_fri', '_mon', '_sat', '_sun', '_thu', '_tue', '_wed', 'month_apr', 'month_aug', 'month_dec', 'month_feb', 'month_jan', 
+            'month_jul', 'month_jun', 'month_mar', 'month_may', 'month_nov', 'month_sep', 'season_autumn', 'season_spring', 'season_summer', 'season_winter', 'day_of_year', 
+            'temperature_diff', 'heavy_precip', 'max_temp_last_3_days', 'avg_temp_last_3_days', 'avg_precip_last_3_days', 'avg_sealevel_last_3_days', 'avg_speed_last_3_days', 
+            'is_holiday', 'avg_daily_sales_item', 'store_sales_rank', 'item_sales_rank', 'zero_sales_count_7d', 'shap'
         )
         
     def get_shap(self, obj):

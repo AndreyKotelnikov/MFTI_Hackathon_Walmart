@@ -7,7 +7,7 @@ from hackathon.sources_db import runQuery
 # from catboost import CatBoostClassifier
 from django.conf import settings
 from django.db import transaction
-from api.models import PredictionReal, PredictionResearch, Research
+from api.models import PredictionKat, PredictionResearch, Research
 from catboost import CatBoostRegressor, Pool
 
 
@@ -19,23 +19,42 @@ def load_ml_model(filename):
 
 
 def get_shap_top_features(model, X: pd.DataFrame):
-    cat_features = ['store_code', 'store_item_code']  # Пример категориальных фичей
+    # Получаем информацию о категориальных фичах из модели
+    cat_features_indices = model.get_cat_feature_indices()
+    cat_features = []
+    
+    if cat_features_indices:
+        # Получаем имена категориальных фичей по их индексам
+        feature_names = model.feature_names_
+        cat_features = [feature_names[i] for i in cat_features_indices]
+    
+    # Проверяем, что все категориальные фичи есть в данных
     cat_features = [col for col in cat_features if col in X.columns]
     
-    sample_pool = Pool(X, cat_features=cat_features)
+    # Создаем Pool с правильным указанием категориальных фичей
+    sample_pool = Pool(
+        data=X,
+        cat_features=cat_features,
+        feature_names=list(X.columns)
+    )
     
-    # Получаем SHAP-значения (размер: [n_samples, n_features + 1])
-    shap_values = model.get_feature_importance(type='ShapValues', data=sample_pool)
-    
-    result = []
-    for shap_row in shap_values:
-        # Убираем последний элемент (base value) и берём абсолютные значения
-        shap_importances = pd.Series(shap_row[:-1], index=X.columns).abs()
-        # Сортируем
-        top_features = shap_importances.sort_values(ascending=False).to_dict()
-        result.append(top_features)
-    
-    return result
+    try:
+        # Получаем SHAP-значения
+        shap_values = model.get_feature_importance(type='ShapValues', data=sample_pool)
+        
+        result = []
+        for shap_row in shap_values:
+            # Убираем последний элемент (base value) и берём абсолютные значения
+            shap_importances = pd.Series(shap_row[:-1], index=X.columns).abs()
+            # Сортируем
+            top_features = shap_importances.sort_values(ascending=False).to_dict()
+            result.append(top_features)
+        
+        return result
+    except Exception as e:
+        print(f"Error calculating SHAP values: {str(e)}")
+        # Возвращаем пустой словарь или None в случае ошибки
+        return [{} for _ in range(len(X))]
 
 
 def process_predictions_with_ml(research):
@@ -52,7 +71,9 @@ def process_predictions_with_ml(research):
     )
     
     # ML логика:
-    model = load_ml_model('CatBoost v1.cbm')
+    model = load_ml_model('catboost_best_model_2.cbm')
+    df['store_nbr'] = df['store_code']
+    df['FG+'] = df['FG_plus']
     df['units_pred'] = model.predict(df[model.feature_names_])
     items_real_total = {}
     items_research_total = {}
@@ -134,5 +155,7 @@ def get_prediction_shap(prediction_id):
     df = pd.DataFrame.from_records(
         research_predictions.values()
     )
-    model = load_ml_model('CatBoost v1.cbm')
+    model = load_ml_model('catboost_best_model_2.cbm')
+    df['store_nbr'] = df['store_code']
+    df['FG+'] = df['FG_plus']
     return get_shap_top_features(model, df[model.feature_names_])[0]

@@ -8,7 +8,7 @@ from django.db.models.aggregates import Count
 from django.utils import timezone
 from rest_framework.viewsets import ModelViewSet, ViewSet
 from api.models import PredictionResearch
-from api.models import PredictionReal
+from api.models import PredictionKat
 from api.models import MeteoStation
 from api.models import Store
 from django.db.models import Q
