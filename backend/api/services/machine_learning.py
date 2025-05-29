@@ -128,7 +128,7 @@ def process_predictions_with_ml(research):
     ]
 
     # 5. Среднее всех ratio
-    average_ratio = sum(item['ratio'] for item in ratio_dicts) / len(ratio_dicts)
+    average_ratio = sum(item['ratio'] for item in ratio_dicts) / len(ratio_dicts) if len(ratio_dicts) else 0
 
     # Вывод результатов
     # print(f"1. Сумма реальных продаж: {sum_real}")
