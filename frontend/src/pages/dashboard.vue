@@ -52,14 +52,14 @@ const itemsRating = computed(() => {
 
     <ResearchHeader v-if="researchData" :research="researchData" />
 
-    <Consolidated :research="researchData" />
-
-    <TopRatingItems  v-if="researchData" :items="itemsRating" />
+    <Consolidated class="pb-8" :research="researchData" />
 
     <UsaMapPie v-if="storesList"
       :stores-list="storesList"
       class="mt-4"
     />
+
+    <TopRatingItems  v-if="researchData" :items="itemsRating" />
 
     <!-- <CalendarHeatmap /> -->
 

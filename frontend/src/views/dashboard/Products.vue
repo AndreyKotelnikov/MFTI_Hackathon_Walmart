@@ -71,13 +71,13 @@
 </script>
 
 <template>
-  <div class="text-center">
-    <h2 class="h2">Детальное сравнение прогнозов продаж</h2>
+  <div class="text-center mt-8">
+    <h2 class="h2">Детальный разбор прогнозов продаж.</h2>
   </div>
 
   <VDivider class="mt-4" />
 
-  <p class="text-sm text-disabled mb-0 mt-1">* Сравнение прогнозируемых продаж при реальной погоде и при указанной пользователем</p>
+  <p class="text-sm text-disabled mt-1">* Сравнение прогнозируемых продаж при реальной погоде и при указанной пользователем</p>
 
   <VDataTableServer
     :items-per-page="15"
