@@ -163,6 +163,7 @@ def create_research_predictions(research, real_predictions):
                 store_sales_rank=real.store_sales_rank,
                 item_sales_rank=real.item_sales_rank,
                 zero_sales_count_7d=real.zero_sales_count_7d,
+                units=real.units,
 
                 # tmax=real.tmax,
                 # tmin=real.tmin,
