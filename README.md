@@ -82,3 +82,22 @@ Random Forest RMSE: 12,74, r2 - 0,88
 2. [Mодель с учётом прогноза погоды](research/AlexZyryanov) 
 
 И мы приняли решение интегрировать их в веб-приложение.
+
+
+## Локальный запуск проекта.
+
+Клиентская часть
+```bash
+nvm use
+npm i
+npm run dev
+```
+
+Запуск api:
+
+Прописать параметры подключения к БД в файл .env
+
+```bash
+source venv/bin/activate
+python3 manage.py runserver
+```
