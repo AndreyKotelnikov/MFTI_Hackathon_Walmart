@@ -52,7 +52,7 @@ import moment from 'moment';
         break
       }
       case PeriodModes.Month: {
-        const value = selectedMonth.value.year + '-' + selectedMonth.value.month + '-01'
+        const value = selectedMonth.value.year + '-' + (selectedMonth.value.month + 1) + '-01'
         const firsDay = moment(value, 'YYYY-MM-DD')
         const lastDay = moment(value, 'YYYY-MM-DD').add(1, 'months').add(-1, 'days')
         const valueStart = firsDay.format('YYYY-MM-DD')

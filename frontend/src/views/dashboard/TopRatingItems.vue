@@ -86,12 +86,12 @@ const sortedItems = computed(() => {
 
 // Топ-5 лучших
 const topItems = computed(() => {
-  return sortedItems.value.slice(0, 5)
+  return sortedItems.value.filter(x => x.ratio >= 1).slice(0, 5)
 })
 
 // Топ-5 худших
 const bottomItems = computed(() => {
-  return sortedItems.value.slice(-5).reverse()
+  return sortedItems.value.filter(x => x.ratio <= 1).slice(-5).reverse()
 })
 
 const maxValue = computed(() => {

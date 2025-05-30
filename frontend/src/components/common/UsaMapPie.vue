@@ -40,16 +40,20 @@ echarts.registerMap('USA', usaJson as any, {
 })
 
 const createStorePie = (storeItem: any) => {
-  return randomPieSeries([storeItem.station_detail.longitude, storeItem.station_detail.latitude], 25, storeItem.items)
+  return renderPieSeries([storeItem.station_detail.longitude, storeItem.station_detail.latitude], 25, storeItem.items)
 }
 
-const randomPieSeries = (center: any, radius: any, items: any[]) => {
+const renderPieSeries = (center: any, radius: any, items: any[]) => {
   const data = items.map((storeItem) => {
-    const value = 100 * storeItem.ratio
+    const value = storeItem.ratio >= 1 ? 100 * storeItem.ratio - 100 : 100 - 100 * storeItem.ratio
     const mark = storeItem.ratio >= 1 ? '⬆️' : '🔻'
+    const color = storeItem.ratio >= 1 ? '#4AE290' : '#E94E4E'; // синий / красный
     return {
       value: value.toFixed(1),
-      name: 'Товар #' + storeItem.store_item_code + ' ' + mark
+      name: 'Товар #' + storeItem.store_item_code + ' ' + mark,
+      itemStyle: {
+        color
+      }
     };
   });
   return {
